@@ -7,6 +7,7 @@ const artworkStrings = {
   viewer: ["Visor de artwork", "Artwork viewer"],
   leftPiece: ["Pieza izquierda", "Left piece"],
   rightPiece: ["Pieza derecha", "Right piece"],
+  noLeft: ["Sin pieza izquierda", "No left piece"],
   noRight: ["Sin pieza derecha", "No right piece"],
   show: ["Mostrar", "Show"],
   useOnProfile: ["Usar en mi perfil", "Use on my profile"],

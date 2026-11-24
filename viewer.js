@@ -148,8 +148,9 @@
   }
 
   function updateSelection() {
-    markSelection(left, leftPosition, "leftPiece", 0);
+    markSelection(left, leftPosition, "leftPiece", 1);
     markSelection(right, rightPosition, "rightPiece", 1);
+    show.disabled = !left.value && !right.value;
     showcase.disabled = !left.value || !right.value || left.value === right.value;
   }
 
@@ -166,6 +167,13 @@
     clearTimeout(previewTimer);
     updateSelection();
     request?.abort();
+    if (show.disabled) {
+      images.replaceChildren();
+      images.classList.remove("sav-images-pair");
+      localizeArtworkNode(status, null);
+      status.textContent = "";
+      return;
+    }
     const current = new AbortController();
     request = current;
     localizeArtworkNode(status, "loading");
@@ -347,6 +355,8 @@
   });
 
   const launch = make("button", showcaseEditor ? "openShowcaseViewer" : "openViewer");
+  const noLeft = new Option("", "");
+  localizeArtworkNode(noLeft, "noLeft");
   const noRight = new Option("", "");
   localizeArtworkNode(noRight, "noRight");
   launch.className = "sav-launch";
@@ -358,9 +368,8 @@
     const currentPair = showcaseEditor && !left.options.length ? location.hash.match(artworkShowcaseHash) : null;
     const previousLeft = currentPair?.[1] || left.value;
     const previousRight = currentPair?.[2] || right.value;
-    left.replaceChildren();
+    left.replaceChildren(noLeft);
     right.replaceChildren(noRight);
-    showcase.disabled = true;
     let position = 0;
     for (const [id, title] of items) {
       position += 1;
@@ -374,12 +383,10 @@
     }
     if (items.has(previousLeft)) left.value = previousLeft;
     if (items.has(previousRight)) right.value = previousRight;
-    show.disabled = !items.size;
+    updateSelection();
     more.hidden = !showcaseEditor || galleryEnded;
     if (items.size) form.requestSubmit();
     else {
-      markSelection(left, leftPosition, "leftPiece", 0);
-      markSelection(right, rightPosition, "rightPiece", 1);
       localizeArtworkNode(status, "noArtwork");
     }
   }
