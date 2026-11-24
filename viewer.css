@@ -1,0 +1,35 @@
+.sav-launch { position: fixed; right: 20px; bottom: 20px; z-index: 10000; }
+.sav-launch, .sav-dialog button, .sav-dialog select, .sav-showcase-transfer :is(button, select) {
+  font: inherit;
+  color: #edf5fb;
+  background: #25465e;
+  border: 1px solid #6386a0;
+  border-radius: 5px;
+  padding: 8px 12px;
+}
+.sav-showcase-transfer { padding: 12px; margin-bottom: 12px; background: #142432; color: #edf5fb; }
+.sav-showcase-transfer > :is(button, select) + :is(button, select) { margin-left: 8px; }
+.sav-launch, .sav-dialog button { cursor: pointer; }
+.sav-selection { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.sav-selection span { padding: 4px 8px; background: #25465e; border-radius: 5px; }
+.sav-dialog {
+  width: min(1100px, 90vw);
+  max-height: 88vh;
+  color: #edf5fb;
+  background: #142432;
+  border: 1px solid #6386a0;
+  border-radius: 8px;
+  padding: 20px;
+  font: 15px system-ui, sans-serif;
+}
+.sav-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+.sav-dialog form { display: flex; flex-wrap: wrap; gap: 8px; }
+.sav-dialog select { max-width: min(32ch, 100%); }
+.sav-images { display: flex; align-items: flex-start; overflow: auto; }
+.sav-images :is(img, canvas) { flex: none; max-width: none; max-height: none; display: block; }
+.sav-images-pair :is(img, canvas) { flex-shrink: 1; min-width: 0; height: auto; }
+.sav-images img[hidden] { display: none; }
+.sav-preview-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.sav-preview-controls label { display: grid; gap: 4px; }
+.sav-preview-controls a { color: #b8ddff; text-decoration: underline; }
+.sav-preview-controls [hidden] { display: none; }
