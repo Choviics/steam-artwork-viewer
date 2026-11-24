@@ -1,0 +1,87 @@
+name: Chrome Web Store
+
+on:
+  push:
+    branches: [main]
+    paths: [manifest.json]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: chrome-web-store
+  cancel-in-progress: false
+
+jobs:
+  submit:
+    if: github.ref == 'refs/heads/main' && vars.CWS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check version
+        id: version
+        env:
+          BEFORE: ${{ github.event.before }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          version=$(jq -er .version manifest.json)
+          if [[ "$EVENT" == push ]]; then
+            previous=$(git show "$BEFORE:manifest.json" | jq -er .version)
+            if [[ "$version" == "$previous" ]]; then
+              echo "The extension version did not change."
+              exit 0
+            fi
+            if [[ $(printf '%s\n' "$previous" "$version" | sort -V | tail -1) != "$version" ]]; then
+              echo "::error::Increase the version in manifest.json."
+              exit 1
+            fi
+          fi
+          echo "submit=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build extension ZIP
+        if: steps.version.outputs.submit == 'true'
+        run: |
+          for file in ./*.js; do node --check "$file" || exit 1; done
+          zip -r "$RUNNER_TEMP/extension.zip" manifest.json ./*.js ./*.css icons _locales
+
+      - name: Submit for review and publish after approval
+        if: steps.version.outputs.submit == 'true'
+        env:
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+          EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+        run: |
+          : "${CLIENT_ID:?}" "${CLIENT_SECRET:?}" "${REFRESH_TOKEN:?}" "${PUBLISHER_ID:?}" "${EXTENSION_ID:?}"
+          token=$(curl --fail --silent --show-error https://oauth2.googleapis.com/token \
+            --data-urlencode grant_type=refresh_token \
+            --data-urlencode "client_id=$CLIENT_ID" \
+            --data-urlencode "client_secret=$CLIENT_SECRET" \
+            --data-urlencode "refresh_token=$REFRESH_TOKEN" | jq -er .access_token)
+          echo "::add-mask::$token"
+          endpoint="https://chromewebstore.googleapis.com"
+          item="v2/publishers/$PUBLISHER_ID/items/$EXTENSION_ID"
+          auth="Authorization: Bearer $token"
+          state=$(curl --fail-with-body --silent --show-error -H "$auth" -X POST \
+            -T "$RUNNER_TEMP/extension.zip" "$endpoint/upload/$item:upload" | jq -er .uploadState)
+          for attempt in {1..24}; do
+            [[ "$state" == IN_PROGRESS || "$state" == UPLOAD_IN_PROGRESS ]] || break
+            sleep 5
+            state=$(curl --fail --silent --show-error -H "$auth" "$endpoint/$item:fetchStatus" | jq -er .lastAsyncUploadState)
+          done
+          if [[ "$state" != SUCCEEDED ]]; then
+            echo "::error::Chrome Web Store upload status: $state. Check the developer dashboard."
+            exit 1
+          fi
+          curl --fail-with-body --silent --show-error -H "$auth" -X POST "$endpoint/$item:publish"
