@@ -3,7 +3,7 @@ name: Chrome Web Store
 on:
   push:
     branches: [main]
-    paths: [manifest.json]
+    paths: ['extension/manifest.json']
   workflow_dispatch:
 
 permissions:
@@ -34,9 +34,13 @@ jobs:
           BEFORE: ${{ github.event.before }}
           EVENT: ${{ github.event_name }}
         run: |
-          version=$(jq -er .version manifest.json)
+          version=$(jq -er .version extension/manifest.json)
           if [[ "$EVENT" == push ]]; then
-            previous=$(git show "$BEFORE:manifest.json" | jq -er .version)
+            if git cat-file -e "$BEFORE:extension/manifest.json" 2>/dev/null; then
+              previous=$(git show "$BEFORE:extension/manifest.json" | jq -er .version)
+            else
+              previous=$(git show "$BEFORE:manifest.json" | jq -er .version)
+            fi
             if [[ "$version" == "$previous" ]]; then
               echo "The extension version did not change."
               exit 0
@@ -51,8 +55,9 @@ jobs:
       - name: Build extension ZIP
         if: steps.version.outputs.submit == 'true'
         run: |
+          cd extension
           for file in ./*.js; do node --check "$file" || exit 1; done
-          zip -r "$RUNNER_TEMP/extension.zip" manifest.json ./*.js ./*.css icons _locales
+          zip -r "$RUNNER_TEMP/extension.zip" .
 
       - name: Submit for review and publish after approval
         if: steps.version.outputs.submit == 'true'

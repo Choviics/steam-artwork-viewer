@@ -1,0 +1,85 @@
+name: GitHub Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'extension/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Determine release version
+        id: version
+        shell: bash
+        run: |
+          latest_tag=$(git tag --list 'v*' --sort=-version:refname | awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/ && !found++')
+          manifest_version=$(jq -er '.version | select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))' extension/manifest.json)
+          version=$manifest_version
+
+          if [[ -n "$latest_tag" ]]; then
+            if git merge-base --is-ancestor HEAD "$latest_tag"; then
+              exit 0
+            fi
+            if git diff --quiet "$latest_tag" HEAD -- extension/; then
+              exit 0
+            fi
+
+            latest_version=${latest_tag#v}
+            if [[ $(printf '%s\n' "$manifest_version" "$latest_version" | sort -V | tail -1) == "$latest_version" ]]; then
+              IFS=. read -r major minor patch <<< "$latest_version"
+              if (( patch == 65535 )); then
+                echo "::error::Increase the minor or major version in manifest.json."
+                exit 1
+              fi
+              version="$major.$minor.$((patch + 1))"
+            fi
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build and check extension ZIP
+        if: steps.version.outputs.version != ''
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          cd extension
+          for file in ./*.js; do
+            node --check "$file"
+          done
+
+          staging="$RUNNER_TEMP/extension"
+          mkdir -p "$staging"
+          cp -a . "$staging/"
+          jq --arg version "$VERSION" '.version = $version' manifest.json > "$staging/manifest.json"
+
+          cd "$staging"
+          archive="$RUNNER_TEMP/steam-artwork-viewer.zip"
+          zip -r "$archive" .
+          unzip -t "$archive"
+
+      - name: Publish GitHub Release
+        if: steps.version.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "v$VERSION" "$RUNNER_TEMP/steam-artwork-viewer.zip" \
+            --target "$GITHUB_SHA" --title "Steam Artwork Viewer v$VERSION" --generate-notes

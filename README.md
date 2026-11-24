@@ -1,65 +1,71 @@
 <p align="center">
-  <img src="icons/artwork-128.png" width="96" height="96" alt="">
+  <img src="extension/icons/artwork-128.png" width="96" height="96" alt="">
 </p>
 
 <h1 align="center">Steam Artwork Viewer</h1>
 
-<p align="center">Previsualiza, divide y prepara imágenes y GIF para los escaparates de tu perfil de Steam directamente desde Chrome.</p>
+<p align="center">Preview, split, and prepare images and GIFs for your Steam profile showcases directly in Chrome.</p>
 
-## Qué puedes hacer
+## Features
 
-- Ver juntas la pieza central y la lateral de un escaparate, con reproducción sincronizada para GIF compatibles.
-- Dividir un PNG, JPG o GIF en dos piezas para un escaparate de arte estándar y descargarlas en un ZIP.
-- Abrir los formularios de Steam con las piezas preparadas, activar el modo de publicación larga o aplicar un título invisible.
-- Elegir dos publicaciones de tu galería y colocarlas en el escaparate que selecciones en el editor de Steam.
-- Cambiar la interfaz entre español e inglés desde el visor.
+- Preview the center and side pieces of an Artwork Showcase together, with synchronized playback for compatible GIFs.
+- Split a PNG, JPG, or GIF into two pieces for the standard Artwork Showcase and download them as a ZIP.
+- Open Steam's upload forms with the pieces attached, enable long artwork mode, or apply an invisible title.
+- Pick two posts from your gallery and place them in a showcase of your choice in the Steam profile editor.
+- Switch between English and Spanish from the viewer.
 
-## Instalación en Chrome
+## Install in Chrome
 
-1. En GitHub, usa **Code → Download ZIP** y extrae el archivo. También puedes clonar el repositorio con `git clone https://github.com/Choviics/steam-artwork-viewer.git`. Si el repositorio es privado, necesitas acceso a él.
-2. Abre `chrome://extensions` y activa **Modo de desarrollador**.
-3. Pulsa **Cargar descomprimida** y selecciona la carpeta que contiene `manifest.json`.
-4. Recarga cualquier pestaña de Steam Community que ya tengas abierta.
+1. Download **steam-artwork-viewer.zip** from the [latest GitHub Release](https://github.com/Choviics/steam-artwork-viewer/releases/latest) and extract it.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the folder containing `manifest.json`.
+4. Refresh any Steam Community tabs you already have open.
 
-## Cómo se usa
+## How to use
 
-### Previsualizar un artwork
+### Preview artwork
 
-Abre un perfil de Steam Community con un escaparate de arte o la ficha de un artwork. Pulsa **Ver artwork**, selecciona la pieza izquierda y, si está disponible, la derecha. La vista previa muestra ambas juntas.
+Open a Steam Community profile with an Artwork Showcase or open an individual artwork post. Click **View artwork**, select the left piece, and select the right piece if one is available. The viewer displays both pieces together.
 
-### Crear y subir las piezas
+### Create and upload the pieces
 
-1. Desde el visor, pulsa **Crear artwork** y selecciona un PNG, JPG o GIF. El exportador genera una pieza central de **506 px** y una lateral de **100 px**, ambas a la misma altura.
-2. Revisa el resultado. Pulsa **Descargar piezas (ZIP)** si quieres guardar los archivos o adjuntarlos manualmente.
-3. Con tu sesión de Steam iniciada, pulsa **Subir a Steam**. Se abren dos formularios, uno por pieza. Mantén abierta la pestaña del visor mientras se adjuntan los archivos.
-4. Revisa y publica cada pieza en su formulario de Steam. Allí también puedes ajustar el modo de publicación larga o aplicar un título invisible.
+1. In the viewer, click **Create artwork** and select a PNG, JPG, or GIF. The exporter creates a **506 px** wide center piece and a **100 px** wide side piece, both at the same height.
+2. Review the preview. Click **Download pieces (ZIP)** if you want to save the files or attach them manually.
+3. While signed in to Steam, click **Upload to Steam**. This opens two forms, one for each piece. Keep the viewer tab open while the files are attached.
+4. Review and publish each piece in its Steam form. You can also adjust long artwork mode or apply an invisible title there.
 
-El escaparate de **Artwork destacado** usa una sola pieza de **630 px**. La división en dos está pensada para el escaparate de arte estándar.
+The **Featured Artwork Showcase** uses a single **630 px** wide piece. The two-piece export is designed for the standard Artwork Showcase.
 
-### Colocar las piezas en tu perfil
+### Place the pieces on your profile
 
-1. En Steam, abre **Editar perfil → Escaparates destacados** y selecciona o añade un escaparate de arte. También puedes usar **Usar en mi perfil** desde el visor cuando hayas seleccionado dos publicaciones.
-2. En el editor, pulsa **Elegir artwork con el visor** y selecciona las publicaciones izquierda y derecha de tu galería.
-3. Pulsa **Colocar en este escaparate**, elige el escaparate de destino y pulsa **Colocar las dos piezas**.
-4. Comprueba la vista previa y pulsa **Guardar** en Steam.
+1. In Steam, go to **Edit Profile → Featured Showcase** and select or add an Artwork Showcase. You can also click **Use on my profile** in the viewer after selecting two posts.
+2. In the profile editor, click **Choose artwork in the viewer** and select the left and right posts from your gallery.
+3. Click **Place in this showcase**, choose the target showcase, and click **Place both pieces**.
+4. Check the preview and click **Save** in Steam.
 
-## Si algo falla
+## Troubleshooting
 
-| Problema | Qué hacer |
+| Issue | What to do |
 | --- | --- |
-| No aparece **Ver artwork** | Recarga la pestaña tras instalar la extensión y prueba en un perfil con un escaparate de arte o en la ficha de una publicación. |
-| Steam no muestra las casillas central y lateral | Selecciona o añade un escaparate de arte estándar en el editor de tu perfil y vuelve a intentar la colocación. |
-| Un formulario no adjunta la pieza | Vuelve a abrir los formularios desde el visor. También puedes extraer el ZIP y adjuntar los archivos manualmente. |
-| Steam limita las solicitudes a la galería | Espera el tiempo que indica el visor antes de volver a cargarla. |
+| **View artwork** is missing | Refresh the tab after installing the extension and try a profile with an Artwork Showcase or an individual artwork post. |
+| Steam does not show the center and side slots | Select or add a standard Artwork Showcase in your profile editor and try placing the pieces again. |
+| An upload form does not attach a piece | Reopen the forms from the viewer. You can also extract the ZIP and attach the files manually. |
+| Steam rate-limits gallery requests | Wait for the time shown in the viewer before reloading the gallery. |
 
-## Privacidad y permisos
+## Privacy and permissions
 
-Las imágenes que seleccionas se procesan en tu navegador. Si eliges publicarlas, se adjuntan a los formularios de Steam para que las revises y las envíes. La extensión lee publicaciones de Steam Community y accede a los dominios de imágenes de Steam (`steamusercontent.com` y `steamuserimages-a.akamaihd.net`) para cargar el artwork. La preferencia de idioma se guarda en el almacenamiento local de Steam Community.
+The extension processes the images you select in your browser. If you choose to upload them, it attaches them to Steam's forms so you can review and submit them. The extension reads Steam Community posts and accesses Steam's image domains (`steamusercontent.com` and `steamuserimages-a.akamaihd.net`) to load artwork. It stores your language preference in Steam Community's local storage.
 
-## Desarrollo
+## Development
 
-La extensión usa JavaScript sin dependencias de instalación ni un paso de compilación. El punto de partida es [manifest.json](manifest.json), que define el service worker y los scripts que se ejecutan en Steam Community. El visor está en [viewer.js](viewer.js), las dimensiones compartidas en [constants.js](constants.js) y los textos de interfaz en [i18n.js](i18n.js).
+The extension uses JavaScript and requires no dependency installation or build step. Start with [manifest.json](extension/manifest.json), which defines the service worker and the scripts that run on Steam Community. The viewer is in [viewer.js](extension/viewer.js), shared dimensions are in [constants.js](extension/constants.js), and interface text is in [i18n.js](extension/i18n.js).
 
-Para probar cambios, pulsa **Recargar** en la tarjeta de la extensión en `chrome://extensions` y actualiza la pestaña de Steam.
+To test from a checkout, load the `extension/` folder in Chrome. After making changes, click **Reload** on the extension card at `chrome://extensions`, then refresh your Steam tab.
 
-Proyecto independiente, sin afiliación con Valve ni Steam.
+This is an independent project with no affiliation with Valve or Steam.
+
+## GitHub releases
+
+Changes under `extension/` on the main branch automatically publish a new GitHub Release with a ZIP you can extract and load into Chrome. The first release uses the version in the manifest. Later releases increment the patch version unless the manifest already specifies a higher version. The workflow writes that version into the ZIP's manifest, so no version commit is needed. Documentation-only changes do not trigger a release.
+
+To publish the first ZIP without an extension change, run the **GitHub Release** workflow manually from the **Actions** tab. To update a manually installed copy, extract the new ZIP into the same folder, then click **Reload** in Chrome.
